@@ -69,33 +69,7 @@ def improve_strokes(image_name, refine_details=False, cut_mask=False) :
         n_iter=50,
         only_far_threshold=1.0
     )
-
-    # ── RIFINITURA DEI DETTAGLI ──────────────────────────────────────
-    if refine_details :
-
-        # ── 6. Costruzione contorni interni  ─────────────────────────
-        edges_internal, orig_enhanced = build_internal_edge_map_enhanced(
-            "/kaggle/working/test_post/" + image_name + ".png",
-            mask, canvas_w, canvas_h,
-            canny_low=30,    # abbassa ulteriormente se vedi pochi bordi nel debug
-            canny_high=120,
-            use_clahe=False,
-            min_edge_length=20,    # tieni solo bordi strutturali (occhi, naso, bocca)
-            blur_before=5          # sfuma il rumore del pelo
-        )
-
-        # ── 7. Snap stroke di dettaglio  ─────────────────────────────
-        refined_detail = snap_detail_strokes_nearest(
-            detail_strokes, edges_internal,
-            canvas_w, canvas_h,
-            max_displacement_per_iter=5.0,  # graduale
-            n_iter=80,
-            snap_threshold=80.0,   # sposta solo punti entro 30px da un bordo interno
-            only_far_threshold=1.0,
-            stretch_along_edge=True
-        )
-
-    # ── 8. Riassembla e salva ───────────────────────────────────────────
+    
 # ── 8. Riassembla e salva ───────────────────────────────────────────
     all_strokes_ordered = [None] * len(svg_strokes)
     for i, stroke in zip(contour_idx, refined_contour):
